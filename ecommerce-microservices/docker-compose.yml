@@ -260,6 +260,16 @@ services:
     networks:
       - shopverse-net
 
+  frontend-ui:
+    build: ./frontend-ui
+    container_name: shopverse-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - shopverse-net
+
 networks:
   shopverse-net:
     driver: bridge
