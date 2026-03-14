@@ -187,7 +187,15 @@ export default function ProductList() {
                         <span className="text-lg font-bold text-white">${product.price?.toFixed(2)}</span>
                       </div>
                       <button 
-                        onClick={(e) => { e.preventDefault(); requireAuth(() => addItem(product)); }}
+                        onClick={(e) => { 
+                          e.preventDefault(); 
+                          requireAuth(() => addItem({
+                            productId: product._id,
+                            name: product.name,
+                            image: product.images?.[0],
+                            price: product.price
+                          })); 
+                        }}
                         className="py-2 px-4 rounded-xl bg-white/10 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 text-white transition-all duration-300 text-sm font-medium flex items-center gap-2"
                       >
                         <FiShoppingCart size={16} /> Add
