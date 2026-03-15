@@ -146,7 +146,7 @@ export default function ProductDetail() {
               </div>
               <span className="w-1 h-1 rounded-full bg-gray-600"></span>
               <span className={product.stock > 0 ? "text-success-500 text-sm font-medium" : "text-red-500 text-sm font-medium"}>
-                {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                {product.stock > 0 ? `${product.stock} in stock` : 'Out of Stock'}
               </span>
             </div>
 

@@ -56,6 +56,32 @@ app.post('/orders', async (req, res) => {
       userId, items, totalAmount: totalAmount + deliveryFee,
       shippingAddress, deliveryType, deliveryFee, estimatedDelivery
     });
+
+    // Deduct stock from product-service and inventory-service
+    const axios = require('axios');
+    const PRODUCT_SERVICE = process.env.PRODUCT_SERVICE_URL || 'http://product-service:3003';
+    const INVENTORY_SERVICE = process.env.INVENTORY_SERVICE_URL || 'http://inventory-service:3005';
+
+    for (const item of items) {
+      // Deduct from product-service
+      axios.get(`${PRODUCT_SERVICE}/products/${item.productId}`)
+        .then(resp => {
+          const currentStock = resp.data.stock || 0;
+          const newStock = Math.max(0, currentStock - item.quantity);
+          return axios.put(`${PRODUCT_SERVICE}/products/${item.productId}`, { stock: newStock });
+        })
+        .catch(e => console.error('Product stock update failed:', e.message));
+
+      // Deduct from inventory-service
+      axios.get(`${INVENTORY_SERVICE}/inventory/${item.productId}`)
+        .then(resp => {
+          const currentStock = resp.data.stock || 0;
+          const newStock = Math.max(0, currentStock - item.quantity);
+          return axios.put(`${INVENTORY_SERVICE}/inventory/${item.productId}`, { stock: newStock });
+        })
+        .catch(e => console.error('Inventory stock update failed:', e.message));
+    }
+
     res.status(201).json({ message: 'Order created', order });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });

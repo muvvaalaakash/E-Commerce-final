@@ -85,6 +85,10 @@ app.get('/admin/inventory', async (req, res) => {
 app.put('/admin/inventory/:productId', async (req, res) => {
   try {
     const resp = await axios.put(`${INVENTORY_SERVICE}/inventory/${req.params.productId}`, req.body);
+    // Also sync stock to product-service so storefront displays correct value
+    if (req.body.stock !== undefined) {
+      try { await axios.put(`${PRODUCT_SERVICE}/products/${req.params.productId}`, { stock: req.body.stock }); } catch (e) {}
+    }
     res.json(resp.data);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });

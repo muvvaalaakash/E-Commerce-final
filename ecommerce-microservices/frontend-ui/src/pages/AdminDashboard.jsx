@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAdminDashboard, getAdminOrders, getAdminUsers, updateOrderStatus, updateInventory } from '../api';
+import { getAdminDashboard, getAdminOrders, getAdminUsers, updateOrderStatus, updateInventory, updateProduct } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { FiUsers, FiBox, FiShoppingBag, FiDollarSign, FiPlus, FiEdit2, FiTrash2, FiSettings } from 'react-icons/fi';
@@ -59,6 +59,8 @@ export default function AdminDashboard() {
   const handleStockUpdate = async (productId, newStock) => {
     try {
       await updateInventory(productId, { stock: Number(newStock) });
+      // Also sync to product-service so storefront shows correct value
+      try { await updateProduct(productId, { stock: Number(newStock) }); } catch(e) {}
       toast.success('Stock updated');
       setProducts(products.map(p => p._id === productId ? { ...p, stock: Number(newStock) } : p));
     } catch (err) {
@@ -149,9 +151,15 @@ export default function AdminDashboard() {
             <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><FiBox size={24}/></div>
           </div>
         </div>
-        <div className="glass-card p-6 border-l-4 border-l-green-500 flex flex-col justify-center items-center cursor-pointer hover:bg-white/10 transition-colors">
-          <FiSettings size={28} className="text-gray-400 mb-2"/>
-          <span className="text-white font-medium">Platform Settings</span>
+        <div className="glass-card p-6 border-l-4 border-l-yellow-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm font-medium mb-1">Low Stock Items</p>
+              <h3 className="text-3xl font-bold text-white">{products.filter(p => p.stock <= 10).length}</h3>
+              <p className="text-xs text-yellow-400 mt-1">≤ 10 units remaining</p>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400"><FiBox size={24}/></div>
+          </div>
         </div>
       </div>
 
