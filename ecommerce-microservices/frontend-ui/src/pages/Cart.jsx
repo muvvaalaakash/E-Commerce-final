@@ -12,12 +12,18 @@ export default function Cart() {
   const navigate = useNavigate();
   const [checkingOut, setCheckingOut] = useState(false);
   const [deliveryType, setDeliveryType] = useState('normal');
-  const [paymentMethod, setPaymentMethod] = useState('credit_card');
   const [paymentDetails, setPaymentDetails] = useState({
     cardNumber: '',
     expiryDate: '',
     cvv: '',
     upiId: ''
+  });
+  const [shippingAddress, setShippingAddress] = useState({
+    name: user?.name || '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: ''
   });
 
   const deliveryFee = deliveryType === 'express' ? 14.99 : 4.99;
@@ -33,7 +39,7 @@ export default function Cart() {
       const orderRes = await createOrder({
         userId: user.id,
         items: cart.items.map(i => ({ productId: i.productId, name: i.name, image: i.image, price: i.price, quantity: i.quantity, size: i.size, color: i.color })),
-        shippingAddress: { name: user.name, address: '123 E-commerce St', city: 'Tech City', state: 'TS', zipCode: '10001' },
+        shippingAddress,
         deliveryType
       });
       const orderId = orderRes.data.order._id;
@@ -140,6 +146,39 @@ export default function Cart() {
               <div className="flex justify-between text-gray-300">
                 <span>Estimated Tax (8%)</span>
                 <span>${tax.toFixed(2)}</span>
+              </div>
+              
+              <div className="border-t border-white/10 pt-4 mt-4">
+                <p className="text-sm text-gray-400 mb-3">Shipping Information</p>
+                <div className="space-y-3 animate-fade-in">
+                  <input 
+                    type="text" required placeholder="Full Name" 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 text-sm"
+                    value={shippingAddress.name} onChange={e => setShippingAddress({...shippingAddress, name: e.target.value})}
+                  />
+                  <input 
+                    type="text" required placeholder="Street Address" 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 text-sm"
+                    value={shippingAddress.address} onChange={e => setShippingAddress({...shippingAddress, address: e.target.value})}
+                  />
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" required placeholder="City" 
+                      className="w-1/2 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 text-sm"
+                      value={shippingAddress.city} onChange={e => setShippingAddress({...shippingAddress, city: e.target.value})}
+                    />
+                    <input 
+                      type="text" required placeholder="State" 
+                      className="w-1/4 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 text-sm"
+                      value={shippingAddress.state} onChange={e => setShippingAddress({...shippingAddress, state: e.target.value})}
+                    />
+                    <input 
+                      type="text" required placeholder="ZIP" 
+                      className="w-1/4 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500 text-sm"
+                      value={shippingAddress.zipCode} onChange={e => setShippingAddress({...shippingAddress, zipCode: e.target.value})}
+                    />
+                  </div>
+                </div>
               </div>
               
               <div className="border-t border-white/10 pt-4 mt-4">

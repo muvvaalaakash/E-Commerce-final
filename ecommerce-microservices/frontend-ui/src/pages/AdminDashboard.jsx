@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAdminDashboard, getAdminOrders, getAdminUsers } from '../api';
+import { getAdminDashboard, getAdminOrders, getAdminUsers, updateOrderStatus, updateInventory } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { FiUsers, FiBox, FiShoppingBag, FiDollarSign, FiPlus, FiEdit2, FiTrash2, FiSettings } from 'react-icons/fi';
@@ -44,6 +44,26 @@ export default function AdminDashboard() {
     import('../api').then(({ getProducts }) => {
       getProducts({ limit: 100 }).then(res => setProducts(res.data.products || []));
     });
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      await updateOrderStatus(orderId, { status: newStatus });
+      toast.success('Order status updated');
+      setOrders(orders.map(o => o._id === orderId ? { ...o, status: newStatus } : o));
+    } catch (err) {
+      toast.error('Failed to update status');
+    }
+  };
+
+  const handleStockUpdate = async (productId, newStock) => {
+    try {
+      await updateInventory(productId, { stock: Number(newStock) });
+      toast.success('Stock updated');
+      setProducts(products.map(p => p._id === productId ? { ...p, stock: Number(newStock) } : p));
+    } catch (err) {
+      toast.error('Failed to update stock');
+    }
   };
 
   const handleProductSubmit = async (e) => {
@@ -159,9 +179,18 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4">{new Date(o.createdAt).toLocaleDateString()}</td>
                   <td className="px-6 py-4 font-medium text-white">${o.totalAmount?.toFixed(2)}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${o.status === 'delivered' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                      {o.status}
-                    </span>
+                    <select 
+                      value={o.status}
+                      onChange={(e) => handleStatusChange(o._id, e.target.value)}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 cursor-pointer ${o.status === 'delivered' ? 'text-green-400' : 'text-yellow-400'}`}
+                    >
+                      <option value="processing">Processing</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="out_for_delivery">Out for Delivery</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
                   </td>
                   <td className="px-6 py-4">
                     <button className="text-purple-400 hover:text-purple-300 mr-3">Examine</button>
@@ -252,9 +281,20 @@ export default function AdminDashboard() {
                     <td className="px-6 py-4 uppercase text-xs">{p.category}</td>
                     <td className="px-6 py-4 text-white">${p.price.toFixed(2)}</td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded text-xs ${p.stock > 10 ? 'bg-green-500/20 text-green-400' : p.stock > 0 ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'}`}>
-                        {p.stock} units
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <input 
+                          type="number" 
+                          min="0"
+                          defaultValue={p.stock}
+                          onBlur={(e) => {
+                            if (Number(e.target.value) !== p.stock) {
+                              handleStockUpdate(p._id, e.target.value);
+                            }
+                          }}
+                          className={`w-20 px-2 py-1 rounded text-xs bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 ${p.stock > 10 ? 'text-green-400' : p.stock > 0 ? 'text-yellow-400' : 'text-red-400'}`}
+                        />
+                        <span className="text-xs text-gray-500">units</span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right space-x-3">
                       <button onClick={() => {

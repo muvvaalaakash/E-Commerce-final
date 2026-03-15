@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getProduct, getSimilarProducts, getReviews, getAverageRating, submitReview } from '../api';
+import { getProduct, getSimilarProducts, getReviews, getAverageRating, submitReview, addToWishlist } from '../api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { FiStar, FiHeart, FiShoppingCart, FiTruck, FiShield, FiClock } from 'react-icons/fi';
@@ -22,7 +22,21 @@ export default function ProductDetail() {
 
   const { addItem } = useCart();
   const { user, requireAuth } = useAuth();
-  // Wishlist addition handles internally by a custom function later
+  const handleAddToWishlist = () => {
+    requireAuth(() => {
+      addToWishlist({
+        userId: user.id,
+        productId: product._id,
+        name: product.name,
+        image: product.images?.[0],
+        price: product.price
+      }).then(() => {
+        toast.success('Added to wishlist!');
+      }).catch(err => {
+        toast.error(err.response?.data?.error || 'Could not add to wishlist');
+      });
+    });
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -201,7 +215,10 @@ export default function ProductDetail() {
               >
                 <FiShoppingCart size={20} /> {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
               </button>
-              <button className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-pink-500 hover:border-pink-500/50 hover:bg-pink-500/10 transition-all duration-300 group">
+              <button 
+                onClick={handleAddToWishlist}
+                className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-pink-500 hover:border-pink-500/50 hover:bg-pink-500/10 transition-all duration-300 group"
+              >
                 <FiHeart size={24} className="group-hover:scale-110 transition-transform" />
               </button>
             </div>

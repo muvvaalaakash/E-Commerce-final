@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getProducts, getTrending } from '../api';
+import { getProducts, getTrending, getRecommendations } from '../api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { FiArrowRight, FiStar, FiShoppingCart } from 'react-icons/fi';
@@ -8,23 +8,33 @@ import { FiArrowRight, FiStar, FiShoppingCart } from 'react-icons/fi';
 export default function Home() {
   const [featured, setFeatured] = useState([]);
   const [trending, setTrending] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addItem } = useCart();
-  const { requireAuth } = useAuth();
+  const { user, requireAuth } = useAuth();
 
   useEffect(() => {
-    Promise.all([
-      getProducts({ featured: true, limit: 4 }),
-      getTrending()
-    ]).then(([featRes, trendRes]) => {
+    const promises = [
+      getProducts({ featured: true, limit: 4 }).catch(() => ({ data: { products: [] } })),
+      getTrending().catch(() => ({ data: { trending: [] } }))
+    ];
+    
+    if (user && user.id) {
+      promises.push(getRecommendations(user.id).catch(() => ({ data: [] })));
+    }
+    
+    Promise.all(promises).then(([featRes, trendRes, recRes]) => {
       setFeatured(featRes.data.products || []);
       setTrending(trendRes.data.trending?.slice(0, 8) || []);
+      if (recRes) {
+        setRecommendations(recRes.data || []);
+      }
       setLoading(false);
     }).catch(err => {
       console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [user]);
 
   const Hero = () => (
     <div className="relative overflow-hidden rounded-3xl mx-4 sm:mx-6 lg:mx-8 mt-6 bg-hero-gradient text-white animate-fade-in shadow-2xl shadow-purple-500/20">
@@ -146,6 +156,10 @@ export default function Home() {
       </div>
 
       <ProductGrid title="Trending Now" products={trending} />
+      
+      {recommendations.length > 0 && (
+        <ProductGrid title="Recommended For You" products={recommendations} />
+      )}
     </div>
   );
 }
