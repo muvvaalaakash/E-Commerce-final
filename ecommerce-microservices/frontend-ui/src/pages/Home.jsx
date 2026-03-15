@@ -20,14 +20,14 @@ export default function Home() {
     ];
     
     if (user && user.id) {
-      promises.push(getRecommendations(user.id).catch(() => ({ data: [] })));
+      promises.push(getRecommendations(user.id).catch(() => ({ data: { recommendations: [] } })));
     }
     
     Promise.all(promises).then(([featRes, trendRes, recRes]) => {
       setFeatured(featRes.data.products || []);
       setTrending(trendRes.data.trending?.slice(0, 8) || []);
-      if (recRes) {
-        setRecommendations(recRes.data || []);
+      if (recRes && recRes.data) {
+        setRecommendations(recRes.data.recommendations || []);
       }
       setLoading(false);
     }).catch(err => {

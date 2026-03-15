@@ -12,6 +12,7 @@ export default function Cart() {
   const navigate = useNavigate();
   const [checkingOut, setCheckingOut] = useState(false);
   const [deliveryType, setDeliveryType] = useState('normal');
+  const [paymentMethod, setPaymentMethod] = useState('credit_card');
   const [paymentDetails, setPaymentDetails] = useState({
     cardNumber: '',
     expiryDate: '',
