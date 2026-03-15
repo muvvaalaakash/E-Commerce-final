@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { createOrder, processPayment } from '../api';
-import { FiTrash2, FiArrowRight, FiShield, FiCreditCard } from 'react-icons/fi';
+import { FiTrash2, FiArrowRight, FiShield, FiCreditCard, FiShoppingCart } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 export default function Cart() {
@@ -147,6 +147,10 @@ export default function Cart() {
               <div className="flex justify-between text-gray-300">
                 <span>Estimated Tax (8%)</span>
                 <span>${tax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-gray-300">
+                <span>Delivery Fee ({deliveryType === 'express' ? 'Express' : 'Standard'})</span>
+                <span>${deliveryFee.toFixed(2)}</span>
               </div>
               
               <div className="border-t border-white/10 pt-4 mt-4">
