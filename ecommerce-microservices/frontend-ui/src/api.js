@@ -5,20 +5,17 @@ const API_BASE = import.meta.env.VITE_API_URL || '/api';
 const api = axios.create({
   baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true
 });
 
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+// Remove manual token interceptor since we use HTTPOnly cookies now
 
 // Auth
 export const login = (data) => api.post('/auth/login', data);
 export const register = (data) => api.post('/auth/register', data);
 export const registerAdmin = (data) => api.post('/auth/register-admin', data);
-export const verifyToken = (token) => api.post('/auth/verify', { token });
+export const logoutUser = () => api.post('/auth/logout');
+export const verifyToken = () => api.post('/auth/verify');
 
 // Products
 export const getProducts = (params) => api.get('/products', { params });

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { verifyToken, login, register, registerAdmin, getProfile } from '../api';
+import { verifyToken, login, register, registerAdmin, logoutUser, getProfile } from '../api';
 
 const AuthContext = createContext();
 
@@ -11,28 +11,20 @@ export const AuthProvider = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      verifyToken(token).then(res => {
-        if (res.data.valid) {
-          // get user robustly
-          getProfile(res.data.decoded.userId)
-             .then(p => setUser({ ...p.data, id: p.data._id }))
-             .catch(() => setUser(res.data.decoded));
-        } else {
-          localStorage.removeItem('token');
-        }
-      }).catch(() => {
-        localStorage.removeItem('token');
-      }).finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    // Rely on httpOnly cookie automatically sent 
+    verifyToken().then(res => {
+      if (res.data.valid) {
+        getProfile(res.data.decoded.userId)
+            .then(p => setUser({ ...p.data, id: p.data._id }))
+            .catch(() => setUser(res.data.decoded));
+      }
+    }).catch(() => {
+      // no token or invalid 
+    }).finally(() => setLoading(false));
   }, []);
 
   const loginUser = async (email, password) => {
     const res = await login({ email, password });
-    localStorage.setItem('token', res.data.token);
     setUser(res.data.user);
     setShowLoginModal(false);
     return res.data;
@@ -40,7 +32,6 @@ export const AuthProvider = ({ children }) => {
 
   const registerUser = async (data) => {
     const res = await register(data);
-    localStorage.setItem('token', res.data.token);
     setUser(res.data.user);
     setShowLoginModal(false);
     return res.data;
@@ -48,13 +39,12 @@ export const AuthProvider = ({ children }) => {
 
   const registerAdminUser = async (data) => {
     const res = await registerAdmin(data);
-    localStorage.setItem('token', res.data.token);
     setUser(res.data.user);
     return res.data;
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    try { await logoutUser(); } catch(e) {}
     setUser(null);
   };
 

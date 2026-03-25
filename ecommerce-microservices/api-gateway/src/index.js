@@ -5,8 +5,18 @@ const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors({ origin: 'http://localhost', credentials: true }));
 app.use(express.json());
+
+const parseCookies = (req) => {
+    const list = {};
+    const rc = req.headers.cookie;
+    rc && rc.split(';').forEach((cookie) => {
+        const parts = cookie.split('=');
+        list[parts.shift().trim()] = decodeURI(parts.join('='));
+    });
+    return list;
+};
 
 // Service URLs
 const SERVICES = {
@@ -28,7 +38,10 @@ const SERVICES = {
 
 // Auth middleware
 const authenticate = async (req, res, next) => {
-  const token = req.headers.authorization;
+  let token = parseCookies(req).token;
+  if (!token && req.headers.authorization) {
+     token = req.headers.authorization.split(' ')[1] || req.headers.authorization;
+  }
   if (!token) return res.status(401).json({ error: 'Authentication required' });
   try {
     const resp = await axios.post(`${SERVICES.auth}/authenticate`, { authorization: token });
@@ -42,12 +55,19 @@ const authenticate = async (req, res, next) => {
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok', service: 'api-gateway' }));
 
+const cookieOptions = {
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
+};
+
 // --- Public Routes (no auth needed) ---
 
 // Auth routes
 app.post('/api/auth/login', async (req, res) => {
   try {
     const resp = await axios.post(`${SERVICES.auth}/validate-login`, req.body);
+    res.cookie('token', resp.data.token, cookieOptions);
     res.json(resp.data);
   } catch (err) { res.status(err.response?.status || 500).json(err.response?.data || { error: err.message }); }
 });
@@ -57,6 +77,7 @@ app.post('/api/auth/register', async (req, res) => {
     const userResp = await axios.post(`${SERVICES.user}/register`, req.body);
     const user = userResp.data.user;
     const tokenResp = await axios.post(`${SERVICES.auth}/generate-token`, { userId: user.id, email: user.email, role: user.role });
+    res.cookie('token', tokenResp.data.token, cookieOptions);
     res.status(201).json({ message: 'Registration successful', user, token: tokenResp.data.token });
   } catch (err) { res.status(err.response?.status || 500).json(err.response?.data || { error: err.message }); }
 });
@@ -66,13 +87,27 @@ app.post('/api/auth/register-admin', async (req, res) => {
     const userResp = await axios.post(`${SERVICES.user}/register-admin`, req.body);
     const user = userResp.data.user;
     const tokenResp = await axios.post(`${SERVICES.auth}/generate-token`, { userId: user.id, email: user.email, role: user.role });
+    res.cookie('token', tokenResp.data.token, cookieOptions);
     res.status(201).json({ message: 'Admin Registration successful', user, token: tokenResp.data.token });
   } catch (err) { res.status(err.response?.status || 500).json(err.response?.data || { error: err.message }); }
 });
 
+app.post('/api/auth/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'Logged out successfully' });
+});
+
 app.post('/api/auth/verify', async (req, res) => {
   try {
-    const resp = await axios.post(`${SERVICES.auth}/verify-token`, req.body);
+    let token = parseCookies(req).token;
+    if (!token && req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[1] || req.headers.authorization;
+    }
+    if (!token && req.body.token) token = req.body.token;
+    
+    if (!token) return res.status(401).json({ error: 'No token' });
+    
+    const resp = await axios.post(`${SERVICES.auth}/verify-token`, { token });
     res.json(resp.data);
   } catch (err) { res.status(err.response?.status || 500).json(err.response?.data || { error: err.message }); }
 });

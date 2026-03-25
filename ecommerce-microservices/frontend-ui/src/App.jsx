@@ -1,7 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
 // Components
@@ -19,6 +19,12 @@ import TrackPackage from './pages/TrackPackage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminAuth from './pages/AdminAuth';
 
+const CustomerRoute = ({ children }) => {
+  const { user } = useAuth();
+  if (user && user.role === 'admin') return <Navigate to="/admin" replace />;
+  return children;
+};
+
 function App() {
   return (
     <BrowserRouter>
@@ -29,13 +35,13 @@ function App() {
             <LoginModal />
             <main className="flex-grow">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/products" element={<ProductList />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/orders" element={<OrderHistory />} />
-                <Route path="/track/:orderId" element={<TrackPackage />} />
+                <Route path="/" element={<CustomerRoute><Home /></CustomerRoute>} />
+                <Route path="/products" element={<CustomerRoute><ProductList /></CustomerRoute>} />
+                <Route path="/product/:id" element={<CustomerRoute><ProductDetail /></CustomerRoute>} />
+                <Route path="/cart" element={<CustomerRoute><Cart /></CustomerRoute>} />
+                <Route path="/wishlist" element={<CustomerRoute><Wishlist /></CustomerRoute>} />
+                <Route path="/orders" element={<CustomerRoute><OrderHistory /></CustomerRoute>} />
+                <Route path="/track/:orderId" element={<CustomerRoute><TrackPackage /></CustomerRoute>} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin-auth" element={<AdminAuth />} />
               </Routes>
@@ -76,13 +82,28 @@ function App() {
             </footer>
           </div>
           <Toaster 
-            position="bottom-right"
+            position="top-center"
             toastOptions={{
               style: {
-                background: '#1a1a2e', color: '#fff', border: '1px solid rgba(255,255,255,0.1)',
-                backdropFilter: 'blur(10px)',
+                background: 'rgba(26, 26, 46, 0.95)',
+                color: '#fff',
+                border: '1px solid rgba(168, 85, 247, 0.5)',
+                backdropFilter: 'blur(16px)',
+                padding: '24px 32px',
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                borderRadius: '24px',
+                boxShadow: '0 25px 50px -12px rgba(168, 85, 247, 0.4)',
+                maxWidth: '600px'
               },
-              success: { iconTheme: { primary: '#a855f7', secondary: '#fff' } }
+              success: { 
+                iconTheme: { primary: '#a855f7', secondary: '#fff' },
+                duration: 4000
+              },
+              error: {
+                iconTheme: { primary: '#ef4444', secondary: '#fff' },
+                duration: 5000
+              }
             }}
           />
         </CartProvider>
