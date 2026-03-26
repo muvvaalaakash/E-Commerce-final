@@ -54,7 +54,9 @@ export default function Navbar() {
             {isCustomer && (
               <>
                 <Link to="/products" className="nav-link text-sm">Shop</Link>
-                <Link to="/admin-auth" className="text-gray-300 hover:text-blue-400 transition-colors text-sm font-medium">Seller Portal</Link>
+                {!user && (
+                  <Link to="/admin-auth" className="text-gray-300 hover:text-blue-400 transition-colors text-sm font-medium">Seller Portal</Link>
+                )}
                 
                 <button onClick={() => requireAuth(() => navigate('/wishlist'))} className="text-gray-300 hover:text-pink-400 transition-colors p-2">
                   <FiHeart size={22} />
@@ -89,7 +91,7 @@ export default function Navbar() {
                   {user.role === 'admin' && (
                     <Link to="/admin" className="block px-4 py-2 text-sm text-purple-400 hover:text-purple-300 hover:bg-white/5 transition-colors font-medium">Admin Dashboard</Link>
                   )}
-                  <button onClick={() => { logout(); navigate('/'); }} className="w-full text-left px-4 py-2 text-sm text-pink-400 hover:text-pink-300 hover:bg-white/5 transition-colors flex items-center gap-2">
+                  <button onClick={async () => { await logout(); window.location.href = '/'; }} className="w-full text-left px-4 py-2 text-sm text-pink-400 hover:text-pink-300 hover:bg-white/5 transition-colors flex items-center gap-2">
                     <FiLogOut /> Sign Out
                   </button>
                 </div>
@@ -136,7 +138,9 @@ export default function Navbar() {
             {isCustomer && (
               <>
                 <Link to="/products" className="text-gray-300 py-2 border-b border-white/5" onClick={() => setMenuOpen(false)}>Shop</Link>
-                <Link to="/admin-auth" className="text-blue-400 py-2 border-b border-white/5 font-medium" onClick={() => setMenuOpen(false)}>Seller Portal</Link>
+                {!user && (
+                  <Link to="/admin-auth" className="text-blue-400 py-2 border-b border-white/5 font-medium" onClick={() => setMenuOpen(false)}>Seller Portal</Link>
+                )}
               </>
             )}
             {user ? (
@@ -150,7 +154,7 @@ export default function Navbar() {
                  {user.role === 'admin' && (
                     <Link to="/admin" className="text-purple-400 py-2 border-b border-white/5" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
                  )}
-                 <button onClick={() => { logout(); navigate('/'); setMenuOpen(false); }} className="text-pink-400 py-2 text-left">Sign Out</button>
+                 <button onClick={async () => { await logout(); window.location.href = '/'; setMenuOpen(false); }} className="text-pink-400 py-2 text-left">Sign Out</button>
                </>
             ) : (
                <button onClick={() => { setShowLoginModal(true); setMenuOpen(false); }} className="text-purple-400 py-2 text-left">Sign In</button>
