@@ -36,8 +36,8 @@ spec:
             name: clahanstore-config
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -85,8 +85,8 @@ spec:
         - containerPort: 80
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -147,8 +147,8 @@ spec:
               key: MONGO_URI_USER
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -211,8 +211,8 @@ spec:
               key: MONGO_URI_AUTH
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -270,8 +270,8 @@ spec:
               key: MONGO_URI_PRODUCT
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -334,8 +334,8 @@ spec:
               key: MONGO_URI_SEARCH
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -393,8 +393,8 @@ spec:
               key: MONGO_URI_INVENTORY
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -462,8 +462,8 @@ spec:
               key: MONGO_URI_CART
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -526,8 +526,8 @@ spec:
               key: MONGO_URI_WISHLIST
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -585,8 +585,8 @@ spec:
               key: MONGO_URI_ORDER
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -649,8 +649,8 @@ spec:
               key: MONGO_URI_PAYMENT
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -718,8 +718,8 @@ spec:
               key: MONGO_URI_INVOICE
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -782,8 +782,8 @@ spec:
               key: MONGO_URI_SHIPPING
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -846,8 +846,8 @@ spec:
               key: MONGO_URI_REVIEW
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -920,8 +920,8 @@ spec:
               key: MONGO_URI_RECOMMENDATION
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -1004,8 +1004,8 @@ spec:
               key: MONGO_URI_ADMIN
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi

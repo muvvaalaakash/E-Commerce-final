@@ -11,6 +11,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: api-gateway
@@ -29,8 +34,8 @@ spec:
             name: clahanstore-config
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -42,6 +47,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: user-service
@@ -65,8 +75,8 @@ spec:
               key: MONGO_URI_USER
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -78,6 +88,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: auth-service
@@ -106,8 +121,8 @@ spec:
               key: MONGO_URI_AUTH
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -119,6 +134,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: product-service
@@ -142,8 +162,8 @@ spec:
               key: MONGO_URI_PRODUCT
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -155,6 +175,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: search-service
@@ -183,8 +208,8 @@ spec:
               key: MONGO_URI_SEARCH
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -196,6 +221,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: inventory-service
@@ -219,8 +249,8 @@ spec:
               key: MONGO_URI_INVENTORY
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -232,6 +262,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: cart-service
@@ -265,8 +300,8 @@ spec:
               key: MONGO_URI_CART
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -278,6 +313,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: wishlist-service
@@ -306,8 +346,8 @@ spec:
               key: MONGO_URI_WISHLIST
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -319,6 +359,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: order-service
@@ -342,8 +387,8 @@ spec:
               key: MONGO_URI_ORDER
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -355,6 +400,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: payment-service
@@ -383,8 +433,8 @@ spec:
               key: MONGO_URI_PAYMENT
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -396,6 +446,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: invoice-service
@@ -429,8 +484,8 @@ spec:
               key: MONGO_URI_INVOICE
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -442,6 +497,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: shipping-service
@@ -470,8 +530,8 @@ spec:
               key: MONGO_URI_SHIPPING
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -483,6 +543,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: review-rating-service
@@ -511,8 +576,8 @@ spec:
               key: MONGO_URI_REVIEW
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -524,6 +589,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: recommendation-service
@@ -562,8 +632,8 @@ spec:
               key: MONGO_URI_RECOMMENDATION
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -575,6 +645,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: admin-service
@@ -623,8 +698,8 @@ spec:
               key: MONGO_URI_ADMIN
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
@@ -636,6 +711,11 @@ metadata:
   namespace: clahanstore
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: frontend-ui
@@ -651,8 +731,8 @@ spec:
         - containerPort: 80
         resources:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
             cpu: 250m
             memory: 256Mi
