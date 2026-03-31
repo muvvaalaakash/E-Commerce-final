@@ -84,3 +84,8 @@ mongodb:
   image:
     repository: mongo
     tag: 6.0
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 1Gi
+    createEbsSc: false
