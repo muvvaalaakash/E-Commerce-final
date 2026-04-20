@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clahanstore-microservices
+  namespace: argocd
+  annotations:
+    # Subscribe to email notifications for various events
+    notifications.argoproj.io/subscribe.on-sync-failed.email: aknagasai2104@gmail.com
+    notifications.argoproj.io/subscribe.on-health-degraded.email: aknagasai2104@gmail.com
+    notifications.argoproj.io/subscribe.on-sync-succeeded.email: aknagasai2104@gmail.com
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/muvvaalaakash/E-Commerce-final.git
+    targetRevision: main
+    path: ecommerce-microservices/kubernetes
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

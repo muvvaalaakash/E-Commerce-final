@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  # ── SMTP Email Service Configuration ──
+  service.email.gmail: |
+    host: smtp.gmail.com
+    port: 465
+    from: aknagasai2104@gmail.com
+    username: $email-username
+    password: $email-password
+
+  # ── Default Trigger Subscriptions ──
+  subscriptions: |
+    - recipients:
+        - email:aknagasai2104@gmail.com
+      triggers:
+        - on-sync-failed
+        - on-health-degraded
+        - on-sync-succeeded
+
+  # ── Email Templates ──
+  template.app-sync-succeeded: |
+    email:
+      subject: "✅ ArgoCD Sync Succeeded: {{.app.metadata.name}}"
+    message: |
+      Application: {{.app.metadata.name}}
+      Status: Sync Succeeded ✅
+      Revision: {{.app.status.sync.revision}}
+      Environment: {{.app.spec.destination.namespace}}
+      Time: {{.app.status.operationState.finishedAt}}
+
+      Details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+
+  template.app-sync-failed: |
+    email:
+      subject: "❌ ArgoCD Sync Failed: {{.app.metadata.name}}"
+    message: |
+      Application: {{.app.metadata.name}}
+      Status: Sync FAILED ❌
+      Revision: {{.app.status.sync.revision}}
+      Environment: {{.app.spec.destination.namespace}}
+      Error: {{.app.status.operationState.message}}
+
+      Details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+
+  template.app-health-degraded: |
+    email:
+      subject: "⚠️ ArgoCD Health Degraded: {{.app.metadata.name}}"
+    message: |
+      Application: {{.app.metadata.name}}
+      Status: Health Degraded ⚠️
+      Health Status: {{.app.status.health.status}}
+      Environment: {{.app.spec.destination.namespace}}
+
+      Details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+
+  # ── Triggers ──
+  trigger.on-sync-succeeded: |
+    - when: app.status.operationState.phase in ['Succeeded']
+      send: [app-sync-succeeded]
+
+  trigger.on-sync-failed: |
+    - when: app.status.operationState.phase in ['Error', 'Failed']
+      send: [app-sync-failed]
+
+  trigger.on-health-degraded: |
+    - when: app.status.health.status == 'Degraded'
+      send: [app-health-degraded]
