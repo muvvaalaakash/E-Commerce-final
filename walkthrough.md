@@ -53,3 +53,44 @@ The platform was styled using a custom `TailwindCSS` theme loaded with:
 - Dark mode primary `bg-[#0f0f1a]` with bright pink/purple typography gradients.
 - Glassmorphism effect (`backdrop-blur-xl`, `bg-white/5`).
 - Fluid `animate-slide-up`, `animate-fade-in`, and scalable animations.
+
+
+
+
+
+ArgoCD + Email Alerts — Walkthrough
+Summary
+Implemented ArgoCD continuous deployment and email alerting for the Clahan Store e-commerce microservices platform. Three new manifest files were created inside ecommerce-microservices/argocd/.
+
+Files Created
+1. argocd/application.yaml
+Defines a single ArgoCD Application named clahanstore-microservices.
+Watches the ecommerce-microservices/kubernetes directory on the main branch of the GitHub repo.
+Uses directory.recurse: true to pick up all sub-directories (deployments, services, configmaps, hpa, ingress).
+Auto-sync enabled with prune: true and selfHeal: true — any manual drift in the cluster is corrected automatically.
+Notification annotations subscribe to on-sync-succeeded, on-sync-failed, and on-health-degraded triggers, sending emails to aknagasai2104@gmail.com.
+2. argocd/notifications-secret.yaml
+Kubernetes Secret storing Gmail SMTP credentials (email-username and email-password) used by argocd-notifications.
+3. argocd/notifications-configmap.yaml
+Configures the Gmail SMTP service (host: smtp.gmail.com, port: 465).
+Defines 3 email templates:
+app-sync-succeeded — ✅ success notification with revision info.
+app-sync-failed — ❌ failure notification with error message.
+app-health-degraded — ⚠️ health warning.
+Defines 3 triggers that map ArgoCD application state changes to the corresponding templates.
+How to Deploy
+bash
+# 1. Make sure ArgoCD is installed in the cluster
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+# 2. Apply the notifications secret & configmap
+kubectl apply -f ecommerce-microservices/argocd/notifications-secret.yaml
+kubectl apply -f ecommerce-microservices/argocd/notifications-configmap.yaml
+# 3. Apply the ArgoCD Application
+kubectl apply -f ecommerce-microservices/argocd/application.yaml
+# 4. Verify
+kubectl get applications -n argocd
+What Was Tested
+YAML syntax is valid for all three manifests.
+Annotation keys follow the notifications.argoproj.io/subscribe.<trigger>.<service> convention.
+Template variables ({{.app.metadata.name}}, etc.) use the correct ArgoCD notification engine syntax.
